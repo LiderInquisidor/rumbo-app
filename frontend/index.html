@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Crea tu cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m8 12.3 2.8 2.8L16 9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-err" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v5.5M12 16.2v.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.6 7 9.5 4.1-1.9 7-5.2 7-9.5V6l-7-3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="nav">
+  <a class="logo" href="index.html" aria-label="Rumbo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b93ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3Z"/></svg>
+    <span>rumbo</span><i class="logo-dot"></i>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="catalogo.html">Explorar paquetes</a>
+    <a href="comparar.html">Comparar</a>
+    <a href="cotizacion.html">Cotización a medida</a>
+    <a href="#" title="El centro de ayuda llegará en un próximo módulo">Ayuda</a>
+  </nav>
+  <div class="nav-right">
+    <div class="theme" role="radiogroup" aria-label="Apariencia">
+      <button type="button" role="radio" aria-checked="true" data-theme-set="oscuro"><i></i>Oscuro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="claro"><i></i>Claro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="descanso"><i></i>Descanso</button>
+    </div>
+    <span class="have">¿Ya tienes cuenta?</span>
+    <a class="btn-login" href="login.html">Iniciar sesión</a>
+  </div>
+</header>
+
+<main class="main">
+  <section class="photo" aria-label="Cartagena de Indias">
+    <div class="photo-top">
+      <span>EL MUNDO TE ESPERA.</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="photo-bottom">
+      <span class="badge">COLOMBIA, UN BUEN COMIENZO.</span>
+      <h2>Tu próximo<br>recuerdo<br>empieza aquí.</h2>
+      <p>Crea tu cuenta y encuentra una forma más personal de descubrir el mundo.</p>
+      <div class="place">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a9b0ff" stroke-width="1.7"><path d="M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.500"/></svg>
+        <div><strong>Cartagena de Indias</strong><small>Caribe colombiano · 10°25′ N, 75°32′ O</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-col">
+    <div class="form-top"><span class="eyebrow">BIENVENIDO A RUMBO</span><span class="step">CUENTA / REGISTRO</span></div>
+    <h1>Hagamos espacio<br>para tu próximo viaje.</h1>
+    <p class="lead">Regístrate para guardar tus destinos, recibir cotizaciones<br>y planear con la ayuda de un asesor.</p>
+    <p class="req">Todos los campos marcados con * son obligatorios.</p>
+
+    <form id="registro" novalidate>
+      <div class="field" data-field="nombre">
+        <label for="nombre">Nombre completo *</label>
+        <div class="control"><input id="nombre" name="nombre" autocomplete="name" placeholder="Nombre y apellido"><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+        <p class="msg"></p>
+      </div>
+
+      <div class="row">
+        <div class="field" data-field="tipoDoc">
+          <label for="tipoDoc">Tipo de documento *</label>
+          <div class="control sel"><select id="tipoDoc" name="tipoDoc"><option value="CC">Cédula (CC)</option><option value="CE">Cédula de extranjería (CE)</option><option value="PA">Pasaporte</option><option value="TI">Tarjeta de identidad (TI)</option></select></div>
+        </div>
+        <div class="field" data-field="documento">
+          <label for="documento">Número de documento *</label>
+          <div class="control"><input id="documento" name="documento" inputmode="numeric" placeholder="Solo números" autocomplete="off"><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+          <p class="msg"></p>
+        </div>
+      </div>
+
+      <div class="field" data-field="correo">
+        <label for="correo">Correo electrónico *</label>
+        <div class="control"><input id="correo" name="correo" type="email" autocomplete="email" placeholder="nombre@correo.com"><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+        <p class="msg"></p>
+      </div>
+
+      <div class="row">
+        <div class="field" data-field="telefono">
+          <label for="telefono">Teléfono celular *</label>
+          <div class="control"><input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000">
+            <svg class="phone" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6.500 3h3l1.500 4-2 1.500a11 11 0 0 0 6.500 6.500L17 13l4 1.500v3a2 2 0 0 1-2 2A16 16 0 0 1 4.500 5a2 2 0 0 1 2-2Z"/></svg></div>
+          <p class="msg"></p>
+        </div>
+        <div class="field" data-field="ciudad">
+          <label for="ciudad">Ciudad de residencia *</label>
+          <div class="control sel"><select id="ciudad" name="ciudad"><option>Bogotá, Colombia</option><option>Medellín, Colombia</option><option>Cali, Colombia</option><option>Barranquilla, Colombia</option><option>Cartagena, Colombia</option><option>Cúcuta, Colombia</option><option>Bucaramanga, Colombia</option><option>Otra ciudad</option></select></div>
+        </div>
+      </div>
+
+      <div class="field" data-field="clave">
+        <label for="clave">Contraseña *</label>
+        <div class="control"><input id="clave" name="clave" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+        <p class="msg"></p>
+        <div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <p class="hint weak" id="claveHint">8 o más caracteres, una mayúscula y un número.</p>
+      </div>
+
+      <label class="terms">
+        <input type="checkbox" id="terminos">
+        <span class="box"></span>
+        <span>He leído y acepto los <a href="#">términos y condiciones</a> y autorizo el <a href="#">tratamiento de mis datos personales</a>. *</span>
+      </label>
+      <p class="msg terms-msg" id="terminosMsg"></p>
+
+      <button class="submit" type="submit">Crear mi cuenta <span aria-hidden="true">→</span></button>
+
+      <p class="privacy"><svg width="13" height="13"><use href="#i-shield"/></svg>Tus datos están protegidos y solo se usan para planear tu viaje.</p>
+      <div class="notice" id="aviso" role="status" aria-live="polite" hidden>
+        <svg width="18" height="18"><use href="#i-err"/></svg>
+        <div><strong id="avisoTitulo"></strong><span id="avisoTexto"></span></div>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Rumbo · Viajes que se quedan contigo.</span>
+  <nav><a href="#">Tratamiento de datos</a><a href="#">Términos y condiciones</a><span>Colombia · COP</span></nav>
+</footer>
+<script src="app.js"></script>
+<script src="registro.js"></script>
+</body>
+</html>

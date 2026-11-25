@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Comparar paquetes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--card:#0d1322;--chip:#131a2c;--warn:#e8a23a;--gx:max(clamp(16px,3vw,40px),calc((100% - 1240px)/2 + clamp(16px,3vw,32px)))}
+[data-theme="claro"]{--card:#fff;--chip:#eef0f7}
+[data-theme="descanso"]{--card:#1a1713;--chip:#221e18}
+.nav,.foot{padding-inline:var(--gx)}
+.links a.active{color:var(--text);border-bottom-color:var(--accent-soft)}
+.page{flex:1;width:100%;max-width:1240px;margin:0 auto;padding:28px clamp(16px,3vw,32px) 40px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.page h1{margin:8px 0 6px}
+.page .lead{margin:0 0 16px;font-size:.88rem}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.meta span,.meta label{font-size:.66rem;padding:5px 11px;border-radius:999px;border:1px solid var(--field-line);background:var(--chip);color:var(--muted);margin:0;display:flex;align-items:center;gap:6px}
+.meta select{background:none;border:0;color:var(--text);font:inherit;font-size:.66rem;cursor:pointer}
+.meta select option{background:var(--field-bg)}
+.back{font-size:.7rem;color:var(--accent-soft)}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.tbl{min-width:760px}
+.r{display:grid;grid-template-columns:190px repeat(var(--n),minmax(0,1fr));border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r>*{padding:14px 16px;font-size:.74rem;line-height:1.5;min-width:0}
+.r>.k{color:var(--muted)}
+.r>.best{background:rgba(76,92,242,.1)}
+.r ul{list-style:none;padding:0;margin:0}
+.r li::before{content:"✓ ";color:var(--ok)}
+.r li.no::before{content:"– ";color:var(--faint)}
+.intro h2{font-size:1.05rem;font-weight:500;margin:8px 0 6px}.intro p{color:var(--muted);font-size:.7rem}
+.col{position:relative}
+.col .ph{height:96px;border-radius:7px;background:var(--g);position:relative;overflow:hidden;margin-bottom:10px}
+.col .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.col .x{position:absolute;right:6px;top:6px;z-index:1;width:22px;height:22px;border-radius:50%;border:0;background:rgba(8,12,24,.75);color:#fff;cursor:pointer;font-size:.8rem;line-height:1}
+.col .tp{font-size:.6rem;color:var(--muted)}
+.col h3{font-size:.98rem;font-weight:500;margin:2px 0 8px}
+.col .pr{font-size:1.25rem;font-weight:500;letter-spacing:-.02em}.col .pr small{font-size:.62rem;color:var(--muted);font-weight:400}
+.btn{height:34px;padding:0 14px;border:1px solid var(--field-line);border-radius:7px;background:var(--chip);color:var(--text);font:inherit;font-size:.72rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:10px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.inline{display:inline-flex;margin:0}
+.low{color:var(--warn)}.okc{color:var(--ok)}
+.tot b,.unit b{font-size:.92rem;font-weight:600}
+.nota{display:flex;gap:8px;margin-top:16px;font-size:.64rem;color:var(--muted)}
+.banner{margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 18px;border:1px solid var(--accent-soft);border-radius:10px;background:var(--card)}
+.banner strong{display:block;font-size:.88rem;font-weight:500;margin-bottom:3px}.banner span{font-size:.7rem;color:var(--muted)}
+.banner .btn{margin:0;display:inline-flex}
+.vacio{padding:40px 20px;text-align:center}
+.vacio strong{display:block;font-size:1rem;font-weight:500;margin-bottom:6px}.vacio span{font-size:.74rem;color:var(--muted);display:block;margin-bottom:16px}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="catalogo.html" aria-label="Rumbo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b93ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3Z"/></svg>
+    <span>rumbo</span><i class="logo-dot"></i>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="catalogo.html">Explorar paquetes</a>
+    <a href="comparar.html" class="active" aria-current="page">Comparar</a>
+    <a href="cotizacion.html">Cotización a medida</a><a href="#" title="El centro de ayuda llegará en un próximo módulo">Ayuda</a>
+  </nav>
+  <div class="nav-right">
+    <div class="theme" role="radiogroup" aria-label="Apariencia">
+      <button type="button" role="radio" aria-checked="true" data-theme-set="oscuro"><i></i>Oscuro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="claro"><i></i>Claro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="descanso"><i></i>Descanso</button>
+    </div>
+    <span id="usuario"></span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="head">
+    <span class="eyebrow" style="font-size:.6rem;letter-spacing:.08em">ELIGE CON TODO A LA VISTA</span>
+    <span class="step" style="font-size:.6rem;letter-spacing:.08em">CU12 / COMPARACIÓN</span>
+  </div>
+  <h1 id="titulo"></h1>
+  <p class="lead">Compara lo que importa y encuentra el viaje que va contigo, sin sorpresas.</p>
+  <div class="meta">
+    <span id="mCount"></span>
+    <label for="pax">Pasajeros <select id="pax"></select></label>
+    <label for="hab">Habitación <select id="hab"></select></label>
+    <span id="mSalida"></span>
+    <a class="back" href="catalogo.html" style="margin-left:auto">← Volver al catálogo</a>
+  </div>
+  <div id="vista"></div>
+  <p class="nota" id="nota" hidden>Precios en COP por persona. La tarifa base es en habitación doble: sencilla +35 %, triple −5 %. Impuestos incluidos. Vuelos no incluidos. Sujeto a disponibilidad.</p>
+  <div class="banner" id="banner" hidden>
+    <div><strong>Un destino es solo el comienzo.</strong><span>Tienes 1 paquete elegido. Selecciona al menos otro para activar la comparación.</span></div>
+    <a class="btn primary" href="catalogo.html">Elegir otro paquete →</a>
+  </div>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Rumbo · Viajes que se quedan contigo.</span>
+  <nav><a href="#">Tratamiento de datos</a><a href="#">Términos y condiciones</a><span>Colombia · COP</span></nav>
+</footer>
+
+<script src="app.js"></script>
+<script>
+(async () => {
+  await Rumbo.listo;
+  const { $, esc, fmtCOP } = Rumbo;
+  const IMG = { 'Cartagena, Colombia': 'img/cartagena-card.jpg', 'San Andrés, Colombia': 'img/sanandres.jpg', 'Bogotá, Colombia': 'img/bogota.jpg', 'Medellín, Colombia': 'img/guatape.jpg' };
+  const G = 'linear-gradient(135deg,#27334f,#c47a4d)';
+  const TIPO = { 'Cartagena, Colombia': 'Cultura y ciudad', 'San Andrés, Colombia': 'Sol y playa', 'Bogotá, Colombia': 'Cultura y ciudad', 'Medellín, Colombia': 'Naturaleza y aventura', 'Santa Marta, Colombia': 'Sol y playa', 'Cusco, Perú': 'Naturaleza y aventura', 'Cancún, México': 'Sol y playa' };
+  const TODOS = ['Hotel 4 estrellas', 'Desayuno', 'Traslados', 'Tour Islas del Rosario', 'Seguro de viaje', 'Guía local', 'Tiquetes aéreos'];
+  const HAB = { Sencilla: 1.35, Doble: 1, Triple: 0.95 }; /* factor sobre la tarifa base (acomodación doble) */
+  const fmtF = iso => iso ? iso.split('-').reverse().join('/') : 'Por definir';
+  const TITULO = ['', 'Un destino. Un buen comienzo.', 'Dos destinos. Una gran decisión.', 'Tres destinos. Tu mejor elección.'];
+
+  /* Paquetes a comparar: ?ids=PQ-001,PQ-002 o la selección guardada en el catálogo (máx. 3) */
+  let ids = [];
+  const url = new URLSearchParams(location.search).get('ids');
+  try { ids = url ? url.split(',') : JSON.parse(sessionStorage.getItem('rumbo-comparar') || '[]'); } catch {}
+  const pub = () => Rumbo.Paq.listar().filter(p => p.estado === 'Publicado');
+  const quitar = id => { ids = ids.filter(x => x !== id); guardar(); pintar(); };
+  function guardar() {
+    try { sessionStorage.setItem('rumbo-comparar', JSON.stringify(ids)); } catch {}
+    history.replaceState(null, '', ids.length ? '?ids=' + ids.join(',') : location.pathname);
+  }
+
+  $('#pax').innerHTML = [1, 2, 3, 4, 5, 6].map(n => `<option value="${n}"${n === 2 ? ' selected' : ''}>${n} ${n === 1 ? 'adulto' : 'adultos'}</option>`).join('');
+
+  $('#hab').innerHTML = Object.keys(HAB).map(k => `<option>${k}</option>`).join(''); $('#hab').value = 'Doble';
+
+  function pintar() {
+    const ps = ids.map(i => pub().find(p => p.id === i)).filter(Boolean).slice(0, 3);
+    ids = ps.map(p => p.id);
+    const n = ps.length, pax = +$('#pax').value, hab = $('#hab').value, px = p => Math.round(p.precio * HAB[hab] / 1000) * 1000;
+    $('#titulo').textContent = TITULO[n] || 'Aún no hay paquetes para comparar.';
+    $('#mCount').textContent = `${n} de 3 paquetes`;
+    const fs = [...new Set(ps.map(p => p.salida))];
+    $('#mSalida').textContent = !n ? 'Salida · por definir' : fs.length === 1 ? 'Salida · ' + fmtF(fs[0]) : 'Salidas distintas por paquete';
+    $('#nota').hidden = !n; $('#banner').hidden = n !== 1;
+    if (!n) {
+      $('#vista').innerHTML = '<div class="wrap vacio"><strong>No has elegido paquetes.</strong><span>Vuelve al catálogo y marca de 1 a 3 paquetes con “Comparar”.</span><a class="btn primary inline" href="catalogo.html">Explorar paquetes →</a></div>';
+      return;
+    }
+    const mejor = ps.reduce((a, b) => b.precio < a.precio ? b : a).id; /* resalta el precio más bajo */
+    const fila = (k, f, cls = '') => `<div class="r ${cls}" style="--n:${n}"><div class="k">${k}</div>${ps.map(p => `<div class="${p.id === mejor && n > 1 ? 'best' : ''}">${f(p)}</div>`).join('')}</div>`;
+    const lista = (a, c = '') => a.length ? `<ul>${a.map(x => `<li class="${c}">${esc(x)}</li>`).join('')}</ul>` : '<span class="k">No aplica</span>';
+    const aloj = p => p.servicios.find(s => /hotel/i.test(s));
+    $('#vista').innerHTML = `<div class="wrap"><div class="tbl">
+      <div class="r" style="--n:${n}"><div class="intro"><h2>Cada detalle cuenta.</h2><p>Ahorra clics: ves destino, servicios y condiciones lado a lado.</p></div>
+        ${ps.map(p => `<div class="col ${p.id === mejor && n > 1 ? 'best' : ''}">
+          <div class="ph" style="--g:${G}">${(p.imagen || IMG[p.destino]) ? `<img src="${esc(p.imagen || IMG[p.destino])}" alt="${esc(p.destino)}" onerror="this.remove()">` : ''}<button class="x" type="button" data-rm="${p.id}" aria-label="Quitar ${esc(p.nombre)} de la comparación">×</button></div>
+          <div class="tp">${esc(TIPO[p.destino] || 'Viaje')}</div><h3><a href="paquete-detalle.html?id=${p.id}">${esc(p.nombre)}</a></h3>
+          <div class="pr">${fmtCOP(px(p)).replace(' COP', '')} <small>COP / persona</small></div>
+          <a class="btn ${p.id === mejor ? 'primary' : ''}" href="cotizacion.html?paquete=${p.id}">Solicitar cotización →</a></div>`).join('')}</div>
+      ${fila('Destino', p => esc(p.destino.split(', ').join('\n')).replace('\n', '<br>'))}
+      ${fila('Duración', p => esc(p.duracion))}
+      ${fila('Fecha de salida', p => fmtF(p.salida))}
+      ${fila('Alojamiento', p => aloj(p) ? esc(aloj(p)) + '<br>Habitación ' + hab.toLowerCase() : '<span class="k">No incluido</span>')}
+      ${fila('Servicios incluidos', p => lista(p.servicios))}
+      ${fila('No incluido', p => lista(TODOS.filter(s => !p.servicios.includes(s)), 'no'))}
+      ${fila('Condiciones', p => esc(p.condiciones))}
+      ${fila('Disponibilidad', p => `<span class="${p.cupos <= 8 ? 'low' : 'okc'}">${p.cupos <= 8 ? 'Últimos ' : ''}${p.cupos} cupos disponibles</span>`)}
+      ${fila('Precio por persona', p => `<span class="unit"><b>${fmtCOP(px(p))}</b></span>`)}
+      ${fila(`Total · ${pax} ${pax === 1 ? 'adulto' : 'adultos'}`, p => `<span class="tot"><b>${fmtCOP(px(p) * pax)}</b></span>`)}
+    </div></div>`;
+  }
+
+  $('#vista').addEventListener('click', e => { const id = e.target.dataset.rm; if (id) quitar(id); });
+  $('#pax').addEventListener('change', pintar); $('#hab').addEventListener('change', pintar);
+
+  const s = Rumbo.Auth.sesion();
+  Rumbo.menuUsuario($('#usuario'));
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => {
+    document.documentElement.dataset.theme = b.dataset.themeSet;
+    document.querySelectorAll('[data-theme-set]').forEach(x => x.setAttribute('aria-checked', x === b));
+    try { localStorage.setItem('rumbo-tema', b.dataset.themeSet); } catch {}
+  }));
+  try { const t = localStorage.getItem('rumbo-tema'); if (t) document.querySelector(`[data-theme-set="${t}"]`)?.click(); } catch {}
+
+  guardar(); pintar();
+})();
+</script>
+</body>
+</html>

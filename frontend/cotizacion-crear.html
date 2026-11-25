@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Construir cotización</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+<style>
+.grid-cot{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+.head-r{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.est-p{font-size:.72rem;padding:6px 18px;border-radius:999px;background:rgba(232,162,58,.16);color:var(--warn)}
+.est-p.ok{background:rgba(63,208,138,.14);color:var(--ok)}
+.chg{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.68rem;color:var(--muted)}
+.chg select{height:30px;background:var(--field-bg);border:1px solid var(--field-line);border-radius:6px;color:var(--text);font:inherit;font-size:.7rem;padding:0 8px;max-width:100%}
+.th,.ln{display:grid;grid-template-columns:minmax(0,1fr) 72px 118px 118px 34px;gap:8px;align-items:center}
+.th{font-size:.58rem;letter-spacing:.06em;color:var(--faint);margin:14px 0 8px}
+.ln{margin-bottom:10px}
+.ln .control input,.ln .control select{height:34px;font-size:.74rem;padding:0 28px 0 10px}
+.ln .control input[readonly]{padding-right:10px;color:var(--text)}
+.ln .control.sel::after{top:12px;right:11px}
+.ln.bad .control input,.ln.bad .control select{border-color:var(--err)}
+.ln .num{padding-right:10px!important}
+.del{width:34px;height:34px;border-radius:7px;border:1px solid var(--field-line);background:var(--chip);color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.del:hover{color:var(--err);border-color:var(--err)}
+.sec{margin:18px 0 8px;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.vacia{font-size:.7rem;color:var(--muted);padding:6px 0 12px}
+#add{margin:8px 0 18px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-top:18px;border-top:1px solid var(--line)}
+.calc h4{font-size:.62rem;letter-spacing:.07em;color:var(--accent-soft);font-weight:500;margin-bottom:10px}
+.calc p{font-size:.74rem;color:var(--muted);line-height:1.55}
+.dsc{margin-top:12px;font-size:.74rem;color:var(--ok);display:flex;align-items:center;gap:6px}
+.dsc input{width:56px;height:28px;background:var(--field-bg);border:1px solid var(--field-line);border-radius:6px;color:var(--ok);font:inherit;font-size:.74rem;padding:0 6px;text-align:center}
+.dsc input.bad{border-color:var(--err)}
+.sm{display:grid;gap:12px;font-size:.7rem;color:var(--muted)}
+.sm div{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.sm b{font-weight:500;color:var(--text);font-size:.78rem}
+.sm .d b{color:var(--ok)}
+.sm .t{margin-top:4px;color:var(--text);font-weight:500}
+.sm .t b{font-size:1.3rem;font-weight:500}
+.two{display:grid;grid-template-columns:1fr 1.5fr;gap:16px;margin-top:22px}
+.two .field{margin:0}
+.two label{font-size:.68rem;margin-bottom:6px}
+.two input{height:38px}
+.cot-date{color-scheme:dark}
+[data-theme="claro"] .cot-date{color-scheme:light}
+.btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btns .btn{height:40px;padding:0 24px}
+#aviso{margin-top:14px}
+/* Vista previa */
+.pv-h{font-size:.86rem;font-weight:500}.pv-s{font-size:.68rem;color:var(--muted);margin:4px 0 14px}
+.doc{background:#fff;color:#1a2030;border-radius:4px;padding:22px 22px 18px;min-height:470px;display:flex;flex-direction:column;font-size:.62rem;line-height:1.5}
+.doc .dtop{font-size:.58rem;font-weight:600;letter-spacing:.04em;margin-bottom:20px;color:#1a2030}
+.doc h3{font-size:1.15rem;font-weight:500;margin-bottom:6px;color:#1a2030}
+.doc .m{color:#7a8296;font-size:.56rem;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #d9dde6}
+.doc .h{font-size:.54rem;letter-spacing:.05em;color:#7a8296;margin:16px 0 6px;font-weight:500}
+.doc ul{list-style:none;padding:0;margin:0}
+.doc .tt{margin-top:auto;padding-top:12px;border-top:1px solid #d9dde6;display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:.58rem;font-weight:500}
+.doc .tt b{font-size:.95rem;font-weight:600}
+.doc .f{margin-top:12px;color:#7a8296;font-size:.54rem}
+.pdfbar{display:flex;gap:12px;margin-top:12px;align-items:stretch}
+.pdfbar .pill2{display:flex;align-items:center;font-size:.68rem;padding:0 16px;border-radius:7px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.pdfbar .pill2.ok{background:rgba(63,208,138,.12);color:var(--ok)}
+.pdfbar .btn{flex:1;height:40px}
+.pdferr{margin-top:22px;padding:16px;border-radius:9px;background:var(--err-bg);border:1px solid var(--err-line)}
+.pdferr small{display:block;font-size:.58rem;letter-spacing:.05em;color:var(--accent-soft);margin-bottom:10px}
+.pdferr strong{display:block;color:var(--err);font-weight:500;margin-bottom:8px;font-size:.84rem}
+.pdferr p{font-size:.7rem;color:#c98a92;line-height:1.5;margin-bottom:14px}
+.pdferr[hidden]{display:none}
+@media(max-width:1100px){.grid-cot{grid-template-columns:1fr}}
+@media(max-width:640px){.th{display:none}.ln{grid-template-columns:1fr 1fr 34px}.ln>*:first-child{grid-column:1/-1}.calc,.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="admin">
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <div class="content">
+    <header class="top" id="top"></header>
+    <main class="page">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow" id="eyebrow"></span>
+          <h1>Construir cotización</h1>
+          <p class="lead" id="resumenSol"></p>
+          <label class="chg">Cambiar solicitud <select id="selSol" aria-label="Elegir solicitud"></select></label>
+        </div>
+        <div class="head-r"><span class="step">CU07 + CU08 / COTIZACIÓN Y PDF</span><span class="est-p" id="est">Borrador</span></div>
+      </div>
+
+      <div class="grid-cot">
+        <form class="card" id="cot" novalidate>
+          <h2>Servicios y costos</h2>
+          <p class="sub" style="margin-bottom:0">Define conceptos, cantidades y precio por viajero.</p>
+          <div class="th" aria-hidden="true"><span>PAQUETE / SERVICIO</span><span>CANT.</span><span>VALOR UNIT. COP</span><span>TOTAL COP</span><span></span></div>
+          <div id="fp"></div>
+          <p class="sec">Servicios adicionales</p>
+          <div id="fa"></div>
+          <button type="button" class="btn" id="add">+ Agregar servicio</button>
+
+          <div class="calc" aria-live="polite">
+            <div><h4>CÁLCULO AUTOMÁTICO</h4><p>El total se actualiza según cantidades, costos y descuento.</p>
+              <div class="dsc">Descuento aplicado: <input id="pct" type="number" min="0" max="30" step="1" aria-label="Porcentaje de descuento"> %</div></div>
+            <div class="sm">
+              <div><span>Subtotal</span><b id="sub"></b></div>
+              <div class="d"><span>Descuento</span><b id="desc"></b></div>
+              <div class="t"><span>Total COP</span><b id="tot"></b></div>
+            </div>
+          </div>
+
+          <div class="two">
+            <div class="field" data-field="valida"><label for="valida">Válida hasta</label>
+              <div class="control"><input id="valida" class="cot-date" type="date"></div><p class="msg"></p></div>
+            <div class="field" data-field="condiciones"><label for="condiciones">Condiciones</label>
+              <div class="control"><input id="condiciones" maxlength="160" autocomplete="off"></div><p class="msg"></p></div>
+          </div>
+          <div class="btns">
+            <button type="button" class="btn" id="borrador">Guardar borrador</button>
+            <button type="submit" class="btn primary" id="generar">Generar cotización PDF</button>
+          </div>
+          <div class="notice" id="aviso" role="status" aria-live="polite" hidden></div>
+        </form>
+
+        <section class="card" aria-label="Vista previa del documento">
+          <h2 class="pv-h">Vista previa del documento</h2>
+          <p class="pv-s">Previsualización integrada en el mismo flujo.</p>
+          <div class="doc" id="doc"></div>
+          <div class="pdfbar"><span class="pill2" id="pdfPill">PDF pendiente</span><button type="button" class="btn" id="descargar" disabled>Descargar PDF</button></div>
+          <div class="pdferr" id="pdfErr" hidden role="alert"><small>NO SE COMPLETÓ LA GENERACIÓN</small><strong>No se pudo generar el PDF</strong><p>La cotización y sus valores se conservan. Vuelve a intentar la generación del documento.</p><button type="button" class="btn" id="reintentar">Reintentar</button></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="app.js"></script>
+<script src="cotizacion-crear.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Cotización a medida</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--card:#0d1322;--chip:#131a2c;--warn:#e8a23a;--gx:max(clamp(16px,3vw,40px),calc((100% - 1240px)/2 + clamp(16px,3vw,32px)))}
+[data-theme="claro"]{--card:#fff;--chip:#eef0f7}
+[data-theme="descanso"]{--card:#1a1713;--chip:#221e18}
+.nav,.foot{padding-inline:var(--gx)}
+.links a.active{color:var(--text);border-bottom-color:var(--accent-soft)}
+.page{flex:1;width:100%;max-width:1240px;margin:0 auto;padding:28px clamp(16px,3vw,32px) 40px}
+.head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.6rem;letter-spacing:.08em}
+.page h1{margin:12px 0 8px;font-size:clamp(1.8rem,4vw,2.7rem);font-weight:400}
+.page>.lead{margin:0 0 24px;font-size:.88rem}
+
+/* Pasos */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:22px 28px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:24px}
+.step-i{display:flex;align-items:center;gap:14px;min-width:0}
+.step-i .n{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:500;background:var(--chip);color:var(--muted);border:1px solid var(--field-line)}
+.step-i.on .n{background:var(--accent);border-color:var(--accent);color:#fff}
+.step-i.done .n{background:rgba(63,208,138,.14);border-color:rgba(63,208,138,.4);color:var(--ok)}
+.step-i strong{display:block;font-size:.82rem;font-weight:500}
+.step-i small{font-size:.68rem;color:var(--muted)}
+.step-i:not(.on):not(.done) strong{color:var(--muted)}
+.step-i::after{content:"";flex:1;height:1px;background:var(--line);min-width:20px}
+.step-i:last-child::after{display:none}
+
+/* Distribución */
+.cot{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:28px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px}
+.form-card{padding:28px}
+.form-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:22px}
+.form-card h2{font-size:1.4rem;font-weight:500;letter-spacing:-.02em}
+.form-card .sub{font-size:.76rem;color:var(--muted);margin-top:6px}
+.pill{font-size:.68rem;padding:5px 12px;border-radius:999px;white-space:nowrap;background:rgba(63,208,138,.12);color:var(--ok)}
+.pill.warn{background:var(--chip);color:var(--muted)}
+.cot .field{margin-bottom:18px}
+.cot label,.cot .lab{display:block;font-size:.78rem;margin-bottom:8px;color:var(--text)}
+.cot .control input,.cot .control select{height:44px;font-size:.86rem;padding:0 40px 0 14px;border-radius:8px}
+.cot .control.sel::after{top:17px}
+.cot .control textarea{width:100%;background:var(--field-bg);border:1px solid var(--field-line);border-radius:8px;color:var(--text);font:inherit;font-size:.86rem;line-height:1.5;padding:12px 14px;resize:vertical;min-height:96px}
+.cot .control textarea:focus{border-color:var(--accent-soft);outline:none}
+.cot .field.is-error .control input,.cot .field.is-error .control select,.cot .field.is-error .control textarea{border-color:var(--err)}
+.cot .control .ico{position:absolute;right:14px;top:13px;width:18px;height:18px;color:var(--muted);pointer-events:none}
+.cot input[type=date]{color-scheme:dark}
+[data-theme="claro"] .cot input[type=date]{color-scheme:light}
+.cot input[type=date]::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.cot .row2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pax{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cot .msg{font-size:.7rem;margin-top:6px}
+.cot .help{font-size:.68rem;color:var(--muted);margin-top:6px}
+.sep{border:0;border-top:1px solid var(--line);margin:8px 0 22px}
+.cot h3{font-size:.95rem;font-weight:500;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{border:1px solid var(--field-line);background:var(--chip);color:var(--muted);font:inherit;font-size:.72rem;padding:7px 12px;border-radius:999px;cursor:pointer;transition:color .15s,border-color .15s}
+.chip:hover{color:var(--text)}
+.chip[aria-pressed="true"]{color:var(--accent-soft);border-color:rgba(139,147,255,.5);background:rgba(76,92,242,.12)}
+.chip[aria-pressed="true"]::before{content:"✓ "}
+.chip.add{border-style:dashed}
+.chip-in{height:32px;border-radius:999px;border:1px solid var(--accent-soft);background:var(--field-bg);color:var(--text);font:inherit;font-size:.72rem;padding:0 12px;width:170px}
+.chip-in:focus{outline:none}
+.cnt{text-align:right;font-size:.66rem;color:var(--muted);margin-top:6px}
+.foot-f{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px;font-size:.74rem}
+.foot-f a{color:var(--accent-soft)}.foot-f span{color:var(--muted);font-size:.7rem}
+
+/* Resumen */
+.side-col{display:flex;flex-direction:column;gap:16px}
+.sum{overflow:hidden}
+.sum .ph{height:176px;position:relative;background:var(--g);background-size:cover}
+.sum .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sum .ph .tag{position:absolute;left:14px;top:14px;z-index:1;font-size:.64rem;font-weight:500;letter-spacing:.05em;padding:5px 11px;border-radius:999px;background:rgba(8,12,24,.72);border:1px solid rgba(139,147,255,.5);color:#d6d9ff;text-transform:uppercase}
+.sum .bd{padding:24px 26px 26px}
+.sum h2{font-size:1.45rem;font-weight:500;letter-spacing:-.02em}
+.sum .who{font-size:.8rem;color:var(--muted);margin:14px 0 18px}
+.dl{display:grid;gap:12px;font-size:.78rem}
+.dl div{display:flex;justify-content:space-between;gap:18px}
+.dl dt{color:var(--muted)}.dl dd{margin:0;text-align:right;overflow-wrap:anywhere}
+.tot{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.tot small{display:block;font-size:.76rem;color:var(--muted)}
+.tot b{display:block;font-size:2.1rem;font-weight:500;letter-spacing:-.02em;margin:6px 0}
+.tot span{font-size:.7rem;color:var(--muted)}
+.infob{display:flex;gap:12px;margin-top:18px;padding:16px;border-radius:10px;background:var(--chip);font-size:.74rem;line-height:1.5;color:var(--muted)}
+.infob svg{flex:none;color:var(--accent-soft);margin-top:2px}
+.infob strong{display:block;color:var(--accent-soft);font-weight:500;margin-bottom:3px}
+.send{width:100%;height:50px;margin-top:18px;border:0;border-radius:9px;background:var(--accent);color:#fff;font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:filter .15s}
+.send:hover{filter:brightness(1.1)}.send[disabled]{opacity:.65;cursor:progress}
+.fine{margin-top:16px;font-size:.7rem;color:var(--muted);line-height:1.5}
+.adv{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--muted);padding:0 4px}
+.adv svg{color:var(--accent-soft)}
+#aviso{margin-top:16px}
+
+/* Enviada */
+.exito{display:flex;gap:18px;align-items:flex-start;padding:30px 32px;border-radius:14px;border:1px solid rgba(63,208,138,.4);background:rgba(63,208,138,.08)}
+.exito>svg{flex:none;color:var(--ok)}
+.exito h2{font-size:1.5rem;font-weight:500;margin-bottom:10px}
+.exito p{font-size:.84rem;line-height:1.6;color:var(--muted);max-width:70ch}
+.exito .acts{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:.8rem}
+.exito .acts a{color:var(--ok);font-weight:500}.exito .acts a+a{color:var(--accent-soft)}
+.exito[hidden],#flujo[hidden]{display:none}
+
+@media(max-width:980px){.cot{grid-template-columns:1fr}}
+@media(max-width:640px){.steps{grid-template-columns:1fr;padding:18px}.step-i::after{display:none}.cot .row2,.pax{grid-template-columns:1fr}.form-card{padding:20px}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="catalogo.html" aria-label="Rumbo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b93ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3Z"/></svg>
+    <span>rumbo</span><i class="logo-dot"></i>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="catalogo.html">Explorar paquetes</a>
+    <a href="comparar.html">Comparar</a>
+    <a href="cotizacion.html" class="active" aria-current="page">Cotización a medida</a>
+    <a href="#" title="El centro de ayuda llegará en un próximo módulo">Ayuda</a>
+  </nav>
+  <div class="nav-right">
+    <div class="theme" role="radiogroup" aria-label="Apariencia">
+      <button type="button" role="radio" aria-checked="true" data-theme-set="oscuro"><i></i>Oscuro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="claro"><i></i>Claro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="descanso"><i></i>Descanso</button>
+    </div>
+    <span id="usuario"></span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="head"><span class="eyebrow">TU VIAJE, A TU MANERA</span><span class="step">CU04 / COTIZACIÓN</span></div>
+  <h1>Tú imaginas. Nosotros trazamos el rumbo.</h1>
+  <p class="lead">Cuéntanos cómo quieres viajar y recibe una propuesta personalizada, sin costo ni compromiso.</p>
+
+  <div class="steps" id="pasos" aria-label="Progreso de la solicitud"></div>
+
+  <div id="flujo" class="cot">
+    <form class="card form-card" id="cotizar" novalidate>
+      <div class="top">
+        <div><h2>01 · Así quieres viajar</h2><p class="sub">Puedes ajustar tus datos antes de enviar. * Obligatorio.</p></div>
+        <span class="pill warn" id="estadoPill">Faltan datos</span>
+      </div>
+
+      <div class="row2">
+        <div class="field" data-field="destino"><label for="destino">Destino *</label>
+          <div class="control sel"><select id="destino"></select></div><p class="msg"></p></div>
+        <div class="field" data-field="origen"><label for="origen">Ciudad de origen *</label>
+          <div class="control sel"><select id="origen"></select></div><p class="msg"></p></div>
+      </div>
+      <div class="row2">
+        <div class="field" data-field="salida"><label for="salida">Fecha de salida *</label>
+          <div class="control"><input id="salida" type="date"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.500v4M15.500 3.500v4"/></svg></div><p class="msg"></p></div>
+        <div class="field" data-field="regreso"><label for="regreso">Fecha de regreso *</label>
+          <div class="control"><input id="regreso" type="date"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.500v4M15.500 3.500v4"/></svg></div><p class="msg"></p></div>
+      </div>
+      <div class="row2">
+        <div class="field" data-field="viajeros"><span class="lab" id="l-via">Número de viajeros *</span>
+          <div class="pax" role="group" aria-labelledby="l-via">
+            <div class="control sel"><select id="adultos" aria-label="Adultos"></select></div>
+            <div class="control sel"><select id="menores" aria-label="Menores"></select></div>
+          </div></div>
+        <div class="field" data-field="presupuesto"><label for="presupuesto">Presupuesto total del viaje *</label>
+          <div class="control"><input id="presupuesto" inputmode="numeric" placeholder="$0 COP" autocomplete="off"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 7.500A2.500 2.500 0 0 1 6.500 5H18v3M4 7.500V17a2 2 0 0 0 2 2h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H6.500A2.500 2.500 0 0 1 4 7.500Z"/><circle cx="15.500" cy="13.500" r=".8" fill="currentColor"/></svg></div>
+          <p class="msg"></p><p class="help">Para todos los viajeros, no por persona.</p></div>
+      </div>
+
+      <hr class="sep">
+      <h3 id="l-pref">¿Qué no puede faltar?</h3>
+      <div class="chips" id="prefs" role="group" aria-labelledby="l-pref"></div>
+
+      <div class="field"><label for="acom">Acomodación</label>
+        <div class="control sel"><select id="acom"></select></div></div>
+      <div class="field"><label for="notas">Algo más que debamos saber (opcional)</label>
+        <div class="control"><textarea id="notas" maxlength="500" placeholder="Fechas especiales, ritmo del viaje, necesidades de movilidad…"></textarea></div>
+        <p class="cnt" id="cnt">0 / 500 caracteres</p></div>
+
+      <div class="foot-f"><a href="catalogo.html">← Volver a los paquetes</a><span id="borrador">Borrador guardado en tu cuenta</span></div>
+    </form>
+
+    <div class="side-col">
+      <section class="card sum" aria-live="polite" aria-label="Resumen de la solicitud">
+        <div class="ph" id="foto"><span class="tag" id="etiqueta">Cotización a medida</span></div>
+        <div class="bd">
+          <h2>02 · Revisa antes de enviar</h2>
+          <p class="who" id="quien"></p>
+          <dl class="dl">
+            <div><dt>Destino</dt><dd id="s-dest"></dd></div>
+            <div><dt>Fechas</dt><dd id="s-fechas"></dd></div>
+            <div><dt>Duración</dt><dd id="s-dur"></dd></div>
+            <div><dt>Viajeros</dt><dd id="s-via"></dd></div>
+            <div><dt>Preferencias</dt><dd id="s-pref"></dd></div>
+          </dl>
+          <div class="tot"><small>Tu presupuesto total</small><b id="s-pres"></b><span id="s-presn"></span></div>
+          <div class="infob">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.800v.1" stroke-linecap="round"/></svg>
+            <div><strong>El precio lo define tu propuesta</strong><span id="s-ref"></span></div>
+          </div>
+          <button class="send" type="submit" form="cotizar" id="enviar">Enviar solicitud
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M21 3 3 10.500l7 2.500 2.500 7L21 3Z"/></svg></button>
+          <div class="notice" id="aviso" role="status" aria-live="polite" hidden>
+            <svg width="18" height="18"><use href="#i-err"/></svg>
+            <div><strong id="avisoTitulo"></strong><span id="avisoTexto"></span></div>
+          </div>
+          <p class="fine" id="s-correo"></p>
+        </div>
+      </section>
+      <p class="adv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.500"/><rect x="17" y="14" width="4" height="6" rx="1.500"/><path d="M19 20c0 1-1.500 2-4 2"/></svg>Un asesor real te acompaña en cada paso.</p>
+    </div>
+  </div>
+
+  <section class="exito" id="exito" hidden aria-live="polite">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="m8 12.300 2.800 2.800L16 9.500" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><h2>¡Tu próximo viaje ya está en marcha!</h2><p id="exitoTxt"></p>
+      <div class="acts"><a href="#" title="Tu cuenta con el estado de tus solicitudes llegará en un próximo módulo">Ver el estado en mi cuenta →</a><a href="catalogo.html">Seguir explorando paquetes →</a><a href="cotizacion.html" id="otra">Hacer otra solicitud</a></div></div>
+  </section>
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-err" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v5.5M12 16.2v.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m8 12.3 2.8 2.8L16 9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<footer class="foot">
+  <span>© 2026 Rumbo · Viajes que se quedan contigo.</span>
+  <nav><a href="#">Tratamiento de datos</a><a href="#">Términos y condiciones</a><span>Colombia · COP</span></nav>
+</footer>
+
+<script src="app.js"></script>
+<script src="cotizacion.js"></script>
+</body>
+</html>

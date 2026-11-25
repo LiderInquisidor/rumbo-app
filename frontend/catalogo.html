@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Explorar paquetes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--card:#0d1322;--chip:#131a2c;--gx:max(clamp(16px,3vw,40px),calc((100% - 1240px)/2 + clamp(16px,3vw,32px)))}
+.nav,.foot{padding-inline:var(--gx)}
+[data-theme="claro"]{--card:#fff;--chip:#eef0f7}
+[data-theme="descanso"]{--card:#1a1713;--chip:#221e18}
+.links a.active{color:var(--text);border-bottom-color:var(--accent-soft)}
+.cat.main{display:block;max-width:1240px;padding-top:0}
+.hero{padding:36px var(--gx) 34px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,var(--bg) 18%,color-mix(in srgb,var(--bg) 72%,transparent) 55%,color-mix(in srgb,var(--bg) 25%,transparent)),url("img/sanandres.jpg") center/cover,linear-gradient(120deg,#0d1730,#1d5c63)}
+.hero h1{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:400;margin:8px 0 6px}
+.hero .lead{margin:0 0 20px;font-size:.9rem}
+.search{display:flex;max-width:640px;gap:8px;padding:6px;border:1px solid var(--field-line);border-radius:9px;background:var(--field-bg)}
+.search input{flex:1;min-width:0;background:none;border:0;color:var(--text);font:inherit;font-size:.82rem;padding:0 10px}
+.search input:focus{outline:none}
+.search:focus-within{border-color:var(--accent-soft)}
+.btn{height:34px;padding:0 16px;border:1px solid var(--field-line);border-radius:7px;background:var(--chip);color:var(--text);font:inherit;font-size:.74rem;font-weight:500;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.link{background:none;border:0;color:var(--accent-soft)}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;margin-top:28px;align-items:start}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;position:sticky;top:16px}
+.filters h2{font-size:1rem;font-weight:500;margin-bottom:16px}
+.filters fieldset{border:0;padding:0;margin:0 0 18px;min-width:0}
+.filters legend,.filters .lab{font-size:.74rem;font-weight:500;margin-bottom:8px;padding:0;display:block}
+.radio{display:flex;gap:9px;align-items:center;font-size:.74rem;color:var(--muted);margin:0 0 9px;cursor:pointer}
+.radio input{appearance:none;width:14px;height:14px;border:1.5px solid var(--faint);border-radius:50%;margin:0;flex:none}
+.radio input:checked{border-color:var(--accent-soft);background:radial-gradient(var(--accent-soft) 45%,transparent 50%)}
+.radio input:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
+.radio:has(input:checked){color:var(--text)}
+.filters .control select{width:100%}
+.range{width:100%;accent-color:var(--accent)}
+.price-v{display:flex;justify-content:space-between;font-size:.66rem;color:var(--muted);margin-top:4px}
+.price-v b{color:var(--text);font-weight:500}
+.filters .btn{width:100%;height:38px;margin-top:4px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.bar h2{font-size:.95rem;font-weight:500}
+.bar label{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font-size:.72rem}
+.bar select{height:34px;background:var(--field-bg);border:1px solid var(--field-line);border-radius:7px;color:var(--text);font:inherit;font-size:.74rem;padding:0 10px}
+.chips-on{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chips-on:empty{display:none}
+.chips-on button{font:inherit;font-size:.66rem;padding:4px 10px;border-radius:999px;border:1px solid var(--accent-soft);background:none;color:var(--text);cursor:pointer}
+.chips-on button::after{content:" ×";color:var(--accent-soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.pk{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.pk .img{height:150px;position:relative;background:var(--g)}
+.pk.on{border-color:var(--accent-soft)}
+.pk .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pk .chk{position:absolute;right:10px;top:10px;z-index:1;width:24px;height:24px;border-radius:5px;background:var(--accent);display:grid;place-items:center}
+.vacio{gap:14px}.vacio .ic{flex:none;color:var(--accent-soft)}.vacio .tx{flex:1;min-width:200px}
+.pk .tag{z-index:1;position:absolute;left:10px;top:10px;font-size:.62rem;padding:4px 10px;border-radius:999px;background:rgba(8,12,24,.7);color:#fff}
+.pk .body{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pk small{font-size:.66rem;color:var(--muted)}
+.pk h3{font-size:1.05rem;font-weight:500;letter-spacing:-.01em}
+.pk .cupos{font-size:.66rem;color:var(--ok)}.pk .cupos.low{color:#e8a23a}
+.pk .price{margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.pk .price small{display:block}.pk .price b{font-size:1.3rem;font-weight:500;letter-spacing:-.02em}
+.pk .price em{font-style:normal;font-size:.6rem;color:var(--muted)}
+.pk .acc{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
+.pk .btn{display:inline-flex;align-items:center;justify-content:center}
+.pick{display:flex;align-items:center;gap:7px;font-size:.66rem;color:var(--muted);cursor:pointer;margin:0}
+.pick input{position:absolute;opacity:0}
+.pick .box{width:14px;height:14px;border-radius:3px;border:1px solid var(--field-line);background:var(--field-bg);display:grid;place-items:center}
+.pick input:checked+.box{background:var(--accent);border-color:var(--accent)}
+.pick input:checked+.box::after{content:"";width:3px;height:6px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.pick input:checked~span:last-child{color:var(--text)}
+.pick input:focus-visible+.box{outline:2px solid var(--accent-soft);outline-offset:2px}
+.cmp{position:sticky;bottom:16px;z-index:5;margin-top:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 18px;border:1px solid var(--accent-soft);border-radius:10px;background:var(--card);box-shadow:0 10px 30px -10px rgba(0,0,0,.45)}
+.cmp[hidden]{display:none}
+.cmp .n{font-size:.72rem;color:var(--accent-soft);font-weight:500}
+.cmp .t{flex:1;min-width:200px}.cmp .t strong{display:block;font-size:.88rem;font-weight:500;margin-bottom:5px}
+.cmp .t button{font:inherit;font-size:.68rem;color:var(--muted);background:none;border:0;cursor:pointer;margin-right:12px;padding:0}
+.cmp .t button::after{content:" ×"}.cmp .t button:hover{color:var(--text)}
+.cmp a.btn{display:inline-flex;align-items:center}.cmp a[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.vacio{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.vacio strong{display:block;font-size:.95rem;font-weight:500;margin-bottom:4px}.vacio span{font-size:.74rem;color:var(--muted)}
+.nota{margin-top:16px;font-size:.64rem;color:var(--muted)}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.filters{position:static}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="catalogo.html" aria-label="Rumbo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b93ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3Z"/></svg>
+    <span>rumbo</span><i class="logo-dot"></i>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="catalogo.html" class="active" aria-current="page">Explorar paquetes</a>
+    <a href="comparar.html">Comparar</a><a href="cotizacion.html">Cotización a medida</a><a href="#" title="El centro de ayuda llegará en un próximo módulo">Ayuda</a>
+  </nav>
+  <div class="nav-right">
+    <div class="theme" role="radiogroup" aria-label="Apariencia">
+      <button type="button" role="radio" aria-checked="true" data-theme-set="oscuro"><i></i>Oscuro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="claro"><i></i>Claro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="descanso"><i></i>Descanso</button>
+    </div>
+    <span id="usuario"></span>
+  </div>
+</header>
+
+<section class="hero">
+    <span class="eyebrow" style="font-size:.6rem;letter-spacing:.08em">CU11 / CATÁLOGO</span>
+    <h1>Hay un viaje que se parece a ti.</h1>
+    <p class="lead">Del Caribe a los Andes, descubre tu próxima gran historia.</p>
+    <form class="search" id="busqueda" role="search">
+      <input id="q" type="search" placeholder="Busca un destino o un paquete" aria-label="Buscar destino o paquete" autocomplete="off">
+      <button class="btn primary" type="submit">Buscar</button>
+    </form>
+</section>
+
+<main class="main cat">
+  <div class="layout">
+    <form class="filters" id="filtros" aria-label="Filtros">
+      <h2>Afina tu búsqueda</h2>
+      <div class="field"><label for="destino">Destino</label>
+        <div class="control sel"><select id="destino"></select></div></div>
+      <fieldset id="tipos"><legend>Tipo de viaje</legend></fieldset>
+      <div class="field"><label for="dur">Duración</label>
+        <div class="control sel"><select id="dur">
+          <option value="">Cualquier duración</option>
+          <option value="1-3">Hasta 3 días</option>
+          <option value="4-5">4 a 5 días</option>
+          <option value="6-99">6 días o más</option>
+        </select></div></div>
+      <div class="field"><label class="lab" for="precio">Precio máximo por persona</label>
+        <input class="range" id="precio" type="range" min="0" step="50000" value="0">
+        <div class="price-v"><span>$0</span><b id="precioTxt"></b></div></div>
+      <button class="btn primary" type="submit">Aplicar filtros</button>
+      <button class="btn link" type="button" id="limpiar">Limpiar filtros</button>
+    </form>
+
+    <section aria-label="Resultados">
+      <div class="bar">
+        <h2 id="cuenta" role="status" aria-live="polite"></h2>
+        <label>Ordenar por
+          <select id="orden"><option value="rec">Recomendados</option><option value="pa">Precio: menor a mayor</option><option value="pd">Precio: mayor a menor</option><option value="du">Duración</option></select>
+        </label>
+      </div>
+      <div class="chips-on" id="activos"></div>
+      <div class="grid" id="lista"></div>
+      <p class="nota">Tarifas base en COP, por adulto en acomodación doble. Sujetas a disponibilidad.</p>
+    </section>
+  </div>
+  <div class="cmp" id="cmp" hidden role="region" aria-label="Paquetes elegidos">
+    <span class="n" id="cmpN"></span>
+    <div class="t"><strong id="cmpT"></strong><div id="cmpL"></div></div>
+    <button class="btn link" type="button" id="cmpClear">Quitar todos</button>
+    <a class="btn primary" id="cmpGo" href="comparar.html">Comparar paquetes →</a>
+  </div>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Rumbo · Viajes que se quedan contigo.</span>
+  <nav><a href="#">Tratamiento de datos</a><a href="#">Términos y condiciones</a><span>Colombia · COP</span></nav>
+</footer>
+
+<script src="app.js"></script>
+<script>
+(async () => {
+  await Rumbo.listo;
+  const { $, esc, fmtCOP } = Rumbo;
+  /* El modelo aún no tiene "tipo de viaje": se deduce del destino. Si el paquete trae p.tipo, tiene prioridad. */
+  const TIPOS = ['Sol y playa', 'Cultura y ciudad', 'Naturaleza y aventura'];
+  const TIPO_DESTINO = { 'Cartagena, Colombia': 'Cultura y ciudad', 'San Andrés, Colombia': 'Sol y playa', 'Bogotá, Colombia': 'Cultura y ciudad', 'Medellín, Colombia': 'Naturaleza y aventura', 'Santa Marta, Colombia': 'Sol y playa', 'Cusco, Perú': 'Naturaleza y aventura', 'Cancún, México': 'Sol y playa' };
+  const GRAD = { 'Sol y playa': 'linear-gradient(135deg,#0e5c73,#3fb7b0)', 'Cultura y ciudad': 'linear-gradient(135deg,#27334f,#c47a4d)', 'Naturaleza y aventura': 'linear-gradient(135deg,#1d4a3a,#7aa65b)' };
+  const IMG = { 'Cartagena, Colombia': 'img/cartagena-card.jpg', 'San Andrés, Colombia': 'img/sanandres.jpg', 'Bogotá, Colombia': 'img/bogota.jpg', 'Medellín, Colombia': 'img/guatape.jpg' };
+  const MAX = 3; /* máximo de paquetes elegidos a la vez */
+  let sel = new Set();
+  try { sel = new Set(JSON.parse(sessionStorage.getItem('rumbo-comparar') || '[]')); } catch {}
+  const tipo = p => p.tipo || TIPO_DESTINO[p.destino] || 'Cultura y ciudad';
+  const dias = p => parseInt(p.duracion, 10) || 0;
+  const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+  const todos = () => Rumbo.Paq.listar().filter(p => p.estado === 'Publicado');
+  const base = todos();
+  const tope = Math.max(1000000, Math.ceil(Math.max(0, ...base.map(p => p.precio)) / 500000) * 500000);
+
+  $('#destino').innerHTML = '<option value="">Todos los destinos</option>' + [...new Set(base.map(p => p.destino))].sort().map(d => `<option>${esc(d)}</option>`).join('');
+  $('#tipos').insertAdjacentHTML('beforeend', ['Todos los viajes', ...TIPOS].map((t, i) =>
+    `<label class="radio"><input type="radio" name="tipo" value="${i ? esc(t) : ''}"${i ? '' : ' checked'}>${esc(t)}</label>`).join(''));
+  const rango = $('#precio'); rango.max = tope; rango.value = tope;
+
+  const estado = () => ({
+    q: norm($('#q').value.trim()), destino: $('#destino').value, tipo: document.querySelector('[name=tipo]:checked').value,
+    dur: $('#dur').value, precio: +rango.value, orden: $('#orden').value
+  });
+
+  function render() {
+    const f = estado(), [dMin, dMax] = f.dur ? f.dur.split('-').map(Number) : [0, 99];
+    $('#precioTxt').textContent = f.precio >= tope ? 'Sin límite' : fmtCOP(f.precio);
+    let r = todos().filter(p =>
+      (!f.q || [p.nombre, p.destino, tipo(p)].some(t => norm(t).includes(f.q))) &&
+      (!f.destino || p.destino === f.destino) && (!f.tipo || tipo(p) === f.tipo) &&
+      dias(p) >= dMin && dias(p) <= dMax && p.precio <= f.precio);
+    const orden = { pa: (a, b) => a.precio - b.precio, pd: (a, b) => b.precio - a.precio, du: (a, b) => dias(a) - dias(b), rec: (a, b) => b.cupos - a.cupos };
+    r.sort(orden[f.orden]);
+
+    $('#cuenta').textContent = `${r.length} ${r.length === 1 ? 'paquete' : 'paquetes'} para descubrir`;
+    const act = [['q', f.q && `“${$('#q').value.trim()}”`], ['destino', f.destino], ['tipo', f.tipo], ['dur', f.dur && $('#dur').selectedOptions[0].text], ['precio', f.precio < tope && 'Hasta ' + fmtCOP(f.precio)]].filter(a => a[1]);
+    $('#activos').innerHTML = act.map(([k, t]) => `<button type="button" data-k="${k}" aria-label="Quitar filtro ${esc(t)}">${esc(t)}</button>`).join('');
+
+    $('#lista').innerHTML = r.length ? r.map(p => `
+      <article class="pk${sel.has(p.id) ? ' on' : ''}">
+        <div class="img" style="--g:${GRAD[tipo(p)]}">${(p.imagen || IMG[p.destino]) ? `<img src="${esc(p.imagen || IMG[p.destino])}" alt="${esc(p.destino)}" loading="lazy" onerror="this.remove()">` : ''}<span class="tag">${esc(tipo(p))}</span>${sel.has(p.id) ? '<span class="chk" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>' : ''}</div>
+        <div class="body">
+          <small>${esc(p.destino)}</small>
+          <h3>${esc(p.nombre)}</h3>
+          <small>${esc(p.duracion)}</small>
+          <span class="cupos ${p.cupos <= 8 ? 'low' : ''}">${p.cupos <= 8 ? 'Últimos ' : ''}${p.cupos} cupos disponibles</span>
+          <div class="price"><small>Desde · por persona</small><b>${fmtCOP(p.precio).replace(' COP', '')}</b> <em>COP</em></div>
+          <div class="acc"><a class="btn" href="paquete-detalle.html?id=${p.id}">Ver detalle</a>
+            <label class="pick"><input type="checkbox" data-id="${p.id}"${sel.has(p.id) ? ' checked' : ''}><span class="box"></span><span>${sel.has(p.id) ? 'Elegido' : 'Comparar'}</span></label></div>
+        </div>
+      </article>`).join('') : `
+      <div class="vacio" style="grid-column:1/-1" role="alert"><svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m9.5 9.5 5 5m0-5-5 5"/></svg><div class="tx"><strong>${$('#q').value.trim() ? `No encontramos viajes para “${esc($('#q').value.trim())}”.` : 'No encontramos viajes con estos filtros.'}</strong><span>Prueba otro destino o amplía los filtros de duración y precio.</span></div><button class="btn" type="button" id="reset">Limpiar búsqueda</button></div>`;
+    barra();
+  }
+
+  function barra() {
+    const ps = [...sel].map(id => Rumbo.Paq.obtener(id)).filter(Boolean);
+    sel = new Set(ps.map(p => p.id));
+    try { sessionStorage.setItem('rumbo-comparar', JSON.stringify([...sel])); } catch {}
+    $('#cmp').hidden = !ps.length;
+    $('#cmpN').textContent = `${ps.length} de ${MAX}`;
+    $('#cmpT').textContent = ['', 'Un destino elegido. Puedes sumar hasta 2 más.', 'Dos destinos. Una gran decisión.', 'Tres destinos. Listo para decidir.'][ps.length] || '';
+    $('#cmpL').innerHTML = ps.map(p => `<button type="button" data-rm="${p.id}" aria-label="Quitar ${esc(p.nombre)}">${esc(p.nombre)}</button>`).join('');
+    const go = $('#cmpGo'); go.setAttribute('aria-disabled', !ps.length);
+    go.href = 'comparar.html?ids=' + [...sel].join(',');
+  }
+  $('#lista').addEventListener('change', e => {
+    const id = e.target.dataset?.id; if (!id) return;
+    if (e.target.checked) {
+      if (sel.size >= MAX) { e.target.checked = false; $('#cmpT').textContent = `Puedes elegir hasta ${MAX} paquetes. Quita uno para agregar otro.`; return; }
+      sel.add(id);
+    } else sel.delete(id);
+    render(); $(`#lista [data-id="${id}"]`)?.focus();
+  });
+  $('#cmpL').addEventListener('click', e => { const id = e.target.dataset.rm; if (id) { sel.delete(id); render(); } });
+  $('#cmpClear').addEventListener('click', () => { sel.clear(); render(); });
+
+  function limpiar() {
+    $('#q').value = ''; $('#destino').value = ''; $('#dur').value = ''; rango.value = tope;
+    document.querySelector('[name=tipo][value=""]').checked = true; render();
+  }
+  $('#busqueda').addEventListener('submit', e => { e.preventDefault(); render(); });
+  $('#filtros').addEventListener('submit', e => { e.preventDefault(); render(); });
+  $('#filtros').addEventListener('input', render);
+  $('#q').addEventListener('input', render);
+  $('#orden').addEventListener('change', render);
+  $('#limpiar').addEventListener('click', limpiar);
+  $('#lista').addEventListener('click', e => { if (e.target.id === 'reset') limpiar(); });
+  $('#activos').addEventListener('click', e => {
+    const k = e.target.dataset.k; if (!k) return;
+    if (k === 'q') $('#q').value = ''; else if (k === 'destino') $('#destino').value = ''; else if (k === 'dur') $('#dur').value = '';
+    else if (k === 'precio') rango.value = tope; else document.querySelector('[name=tipo][value=""]').checked = true;
+    render();
+  });
+
+  /* Sesión y tema */
+  const s = Rumbo.Auth.sesion();
+  Rumbo.menuUsuario($('#usuario'));
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => {
+    document.documentElement.dataset.theme = b.dataset.themeSet;
+    document.querySelectorAll('[data-theme-set]').forEach(x => x.setAttribute('aria-checked', x === b));
+    try { localStorage.setItem('rumbo-tema', b.dataset.themeSet); } catch {}
+  }));
+  try { const t = localStorage.getItem('rumbo-tema'); if (t) document.querySelector(`[data-theme-set="${t}"]`)?.click(); } catch {}
+
+  render();
+})();
+</script>
+</body>
+</html>

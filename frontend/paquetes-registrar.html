@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Registrar paquete turístico</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <div class="content">
+    <header class="top" id="top"></header>
+    <main class="page">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">PAQUETES TURÍSTICOS / NUEVO PAQUETE</span>
+          <h1>Registrar paquete turístico</h1>
+          <p class="lead">Agrega una experiencia al catálogo. Los campos con * son obligatorios.</p>
+        </div>
+        <span class="step">RF12 · Solo Administrador</span>
+      </div>
+
+      <div class="grid-reg">
+        <form class="card" id="paquete" novalidate>
+          <h2>Información del paquete</h2>
+          <p class="sub">Completa los datos que verán los clientes en el catálogo.</p>
+          <div id="campos"></div>
+          <div class="actions">
+            <button type="button" class="btn" id="cancelar">Cancelar</button>
+            <button type="submit" class="btn primary" id="guardar">Registrar paquete</button>
+          </div>
+        </form>
+
+        <aside class="stack">
+          <section class="card resumen" aria-live="polite">
+            <h2>Resumen del registro</h2>
+            <p class="sub">Revisa la información antes de publicar.</p>
+            <span class="tag" id="r-estado">Borrador</span>
+            <h3 id="r-nombre">Nombre del paquete</h3>
+            <p class="dest" id="r-dest">Destino · duración</p>
+            <div class="precio"><span>Por persona</span><b id="r-precio">$0 COP</b></div>
+            <p class="cupos" id="r-cupos">0 cupos disponibles · 0 servicios incluidos</p>
+            <div class="info">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="flex:none"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.1" stroke-linecap="round"/></svg>
+              <div><strong>Al registrar</strong>Se asignará un código y el paquete quedará disponible en el catálogo.</div>
+            </div>
+          </section>
+          <div class="notice" id="aviso" role="status" aria-live="polite" hidden></div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+(async () => {
+  await Rumbo.listo;
+  if (!Rumbo.proteger('Administrador')) return;
+  const $ = Rumbo.$, f = $('#paquete'), av = $('#aviso');
+  Rumbo.panel([['Panel de trabajo'], ['Paquetes turísticos', 'paquetes-modificar.html'], ['Nuevo paquete']]);
+  $('#campos').innerHTML = Rumbo.camposHTML();
+
+  function resumen() {
+    const d = Rumbo.leer(f), n = d.servicios.length;
+    $('#r-nombre').textContent = d.nombre.trim() || 'Nombre del paquete';
+    $('#r-dest').textContent = [d.destino, d.duracion].filter(Boolean).join(' · ') || 'Destino · duración';
+    $('#r-precio').textContent = d.precio > 0 ? Rumbo.fmtCOP(d.precio) : '$0 COP';
+    const c = Number.isInteger(d.cupos) ? d.cupos : 0;
+    $('#r-cupos').textContent = `${c} ${c === 1 ? 'cupo disponible' : 'cupos disponibles'} · ${n} ${n === 1 ? 'servicio incluido' : 'servicios incluidos'}`;
+  }
+  Rumbo.enlazar(f, resumen);
+  resumen();
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Rumbo.leer(f), errs = Rumbo.validar(d);
+    if (Object.keys(errs).length) {
+      Rumbo.marcar(f, errs);
+      Rumbo.aviso(av, 'err', 'No se registró el paquete', 'Revisa los campos marcados en rojo y vuelve a intentarlo.');
+      return;
+    }
+    const { precioTxt, ...datos } = d;
+    const btn = f.querySelector('[type=submit]'); if (btn) btn.disabled = true;
+    const r = await Rumbo.Paq.crear(datos);
+    if (btn) btn.disabled = false;
+    if (!r.ok) { Rumbo.aviso(av, 'err', 'No se registró el paquete', r.error); return; }
+    const p = r.paquete;
+    $('#r-estado').textContent = 'Publicado'; $('#r-estado').classList.add('pub');
+    Rumbo.aviso(av, 'ok', 'Registro exitoso', `${p.nombre} se registró como ${p.id}. Ya está disponible en el catálogo.`,
+      `<br><a href="paquetes-modificar.html?id=${p.id}">Editar este paquete</a>`);
+    Rumbo.poner(f, null);
+    setTimeout(() => { $('#r-estado').textContent = 'Borrador'; $('#r-estado').classList.remove('pub'); resumen(); }, 2500);
+  });
+  $('#cancelar').addEventListener('click', () => { location.href = 'paquetes-modificar.html'; });
+})();
+</script>
+</body>
+</html>

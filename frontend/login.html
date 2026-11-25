@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Iniciar sesión</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m8 12.3 2.8 2.8L16 9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-err" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v5.5M12 16.2v.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.6 7 9.5 4.1-1.9 7-5.2 7-9.5V6l-7-3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="nav">
+  <a class="logo" href="index.html" aria-label="Rumbo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b93ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 2.5 2.5 7L21 3Z"/></svg>
+    <span>rumbo</span><i class="logo-dot"></i>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="catalogo.html">Explorar paquetes</a>
+    <a href="comparar.html">Comparar</a>
+    <a href="cotizacion.html">Cotización a medida</a>
+    <a href="#" title="El centro de ayuda llegará en un próximo módulo">Ayuda</a>
+  </nav>
+  <div class="nav-right">
+    <div class="theme" role="radiogroup" aria-label="Apariencia">
+      <button type="button" role="radio" aria-checked="true" data-theme-set="oscuro"><i></i>Oscuro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="claro"><i></i>Claro</button>
+      <button type="button" role="radio" aria-checked="false" data-theme-set="descanso"><i></i>Descanso</button>
+    </div>
+    <span class="have">¿Aún no tienes cuenta?</span>
+    <a class="btn-login" href="index.html">Crear cuenta</a>
+  </div>
+</header>
+
+<main class="main">
+  <section class="photo" aria-label="Cartagena de Indias">
+    <div class="photo-top">
+      <span>QUÉ BUENO VERTE DE NUEVO.</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="photo-bottom">
+      <span class="badge">TUS DESTINOS TE ESPERAN.</span>
+      <h2>Retoma tu viaje<br>donde lo<br>dejaste.</h2>
+      <p>Entra a tu cuenta para ver tus destinos guardados, tus cotizaciones y a tu asesor.</p>
+      <div class="place">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a9b0ff" stroke-width="1.7"><path d="M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <div><strong>Cartagena de Indias</strong><small>Caribe colombiano · 10°25′ N, 75°32′ O</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-col login-col">
+    <div class="form-top"><span class="eyebrow">BIENVENIDO DE NUEVO</span><span class="step">CUENTA / ACCESO</span></div>
+    <h1>Inicia sesión<br>y sigue planeando.</h1>
+    <p class="lead">Usa el correo con el que te registraste en Rumbo.</p>
+
+    <form id="login" novalidate>
+      <div class="field" data-field="correo">
+        <label for="correo">Correo electrónico *</label>
+        <div class="control"><input id="correo" type="email" autocomplete="email" placeholder="nombre@correo.com"><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+        <p class="msg"></p>
+      </div>
+      <div class="field" data-field="clave">
+        <label for="clave">Contraseña *</label>
+        <div class="control"><input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña"><button type="button" class="pass-toggle" id="ver" aria-pressed="false">Mostrar</button><svg class="st ok"><use href="#i-ok"/></svg><svg class="st er"><use href="#i-err"/></svg></div>
+        <p class="msg"></p>
+      </div>
+
+      <div class="row-opts">
+        <label class="terms"><input type="checkbox" id="recordar" checked><span class="box"></span><span>Mantener sesión iniciada</span></label>
+        <a href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button class="submit" type="submit" id="enviar">Iniciar sesión <span aria-hidden="true">→</span></button>
+      <p class="privacy"><svg width="13" height="13"><use href="#i-shield"/></svg>Tu conexión y tus datos están protegidos.</p>
+
+      <div class="notice" id="aviso" role="status" aria-live="polite" hidden>
+        <svg width="18" height="18"><use href="#i-err"/></svg>
+        <div><strong id="avisoTitulo"></strong><span id="avisoTexto"></span></div>
+      </div>
+    </form>
+    <p class="switch">¿Aún no tienes cuenta? <a href="index.html">Crea tu cuenta</a></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Rumbo · Viajes que se quedan contigo.</span>
+  <nav><a href="#">Tratamiento de datos</a><a href="#">Términos y condiciones</a><span>Colombia · COP</span></nav>
+</footer>
+<script src="app.js"></script>
+<script src="login.js"></script>
+</body>
+</html>

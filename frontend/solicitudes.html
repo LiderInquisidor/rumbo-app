@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Solicitudes recibidas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+<style>
+.bar-f{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;margin-bottom:18px}
+.bar-f .tools{margin:0;flex:1;min-width:280px}
+.bar-f .n{margin-left:auto;font-size:.68rem;color:var(--muted)}
+.sc{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:12px 12px;border-radius:8px;border:1px solid transparent}
+.sc:hover{background:var(--chip)}
+.sc:focus-visible{outline:2px solid var(--accent-soft)}
+.sc[aria-checked="true"]{background:rgba(76,92,242,.16);border-color:rgba(139,147,255,.45)}
+.sc .id{grid-column:1/-1;font-size:.62rem;color:var(--accent-soft)}
+.sc strong{font-size:.8rem;font-weight:500}
+.sc small{font-size:.66rem;color:var(--muted)}
+.sc .l{grid-column:1}.sc .r{grid-column:2;grid-row:2/5;text-align:right;align-self:end}
+.pri{display:inline-block;margin-top:6px;font-size:.66rem;padding:4px 14px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.pri.Alta{background:rgba(232,162,58,.16);color:var(--warn)}
+.est{font-size:.62rem;padding:4px 12px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.est.Nueva{background:rgba(76,92,242,.2);color:var(--accent-soft)}
+.est.Cotizada{background:rgba(63,208,138,.12);color:var(--ok)}
+.est.En.gestión{}
+.list{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sec{margin:22px 0 12px;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-soft)}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.dl small{display:block;font-size:.64rem;color:var(--muted);margin-bottom:4px}
+.dl b{font-weight:500;font-size:.78rem}
+.pref{font-size:.76rem;line-height:1.55}
+.falta{margin-top:10px;font-size:.68rem;color:var(--warn)}
+.det .actions{margin-top:20px}.det .actions .btn{flex:1}
+.det .field{margin-top:22px}
+.det .control select{padding-right:30px}
+@media(max-width:520px){.dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="admin">
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <div class="content">
+    <header class="top" id="top"></header>
+    <main class="page">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">COTIZACIONES</span>
+          <h1>Solicitudes recibidas</h1>
+          <p class="lead">Prioriza solicitudes nuevas y mantén informado al cliente.</p>
+        </div>
+        <span class="step">CU05 / SOLICITUDES</span>
+      </div>
+
+      <section class="card bar-f" aria-label="Filtros">
+        <div class="tools">
+          <div class="control"><input id="buscar" type="search" placeholder="Buscar cliente o destino" aria-label="Buscar cliente o destino" autocomplete="off"></div>
+          <div class="control"><select id="estado" aria-label="Filtrar por estado"><option value="">Estado: todos</option><option>Nueva</option><option>En gestión</option><option>Cotizada</option></select></div>
+          <div class="control"><select id="prio" aria-label="Filtrar por prioridad"><option value="">Prioridad: todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
+        </div>
+        <span class="n" id="cuenta" role="status" aria-live="polite"></span>
+      </section>
+
+      <div class="grid-mod">
+        <section class="card" aria-label="Bandeja">
+          <h2>Bandeja</h2>
+          <p class="sub" style="margin:0">Ordenada por prioridad y fecha de ingreso.</p>
+          <div class="list" id="lista" role="radiogroup" aria-label="Solicitudes"></div>
+        </section>
+        <section class="card det" id="detalle" aria-live="polite"></section>
+      </div>
+      <div class="notice" id="aviso" role="status" aria-live="polite" hidden style="margin-top:14px"></div>
+    </main>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+(async () => {
+  await Rumbo.listo;
+  if (!Rumbo.proteger('Administrador')) return;
+  const { $, esc, Sol, fmtCOP } = Rumbo, av = $('#aviso');
+  Rumbo.panel([['Panel de trabajo'], ['Solicitudes']], 'Solicitudes');
+
+  const PRI = { Alta: 0, Media: 1, Baja: 2 }, MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const fecha = iso => iso.split('-').reverse().join('/');
+  const corto = (a, b) => { const [, m1, d1] = a.split('-'), [, m2, d2] = b.split('-'); return m1 === m2 ? `${+d1}–${+d2} ${MES[m1 - 1]}` : `${+d1} ${MES[m1 - 1]}–${+d2} ${MES[m2 - 1]}`; };
+  const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  let sel = new URLSearchParams(location.search).get('id');
+
+  const filtradas = () => {
+    const q = norm($('#buscar').value.trim()), e = $('#estado').value, p = $('#prio').value;
+    return Sol.listar().filter(s => (!e || s.estado === e) && (!p || s.prioridad === p) && (!q || norm(s.cliente + ' ' + s.destino).includes(q)))
+      .sort((a, b) => PRI[a.prioridad] - PRI[b.prioridad] || b.recibida.localeCompare(a.recibida) || b.id.localeCompare(a.id));
+  };
+
+  function lista() {
+    const r = filtradas();
+    $('#cuenta').textContent = `${r.length} ${r.length === 1 ? 'solicitud' : 'solicitudes'}`;
+    $('#lista').innerHTML = r.length ? r.map(s => `
+      <button type="button" class="sc" role="radio" aria-checked="${s.id === sel}" data-id="${s.id}">
+        <span class="id">${s.id} · ${esc(s.estado)}</span>
+        <span class="l"><strong>${esc(s.cliente)}</strong><br><small>${esc(s.destino.split(',')[0])} · ${corto(s.desde, s.hasta)}</small><br><span class="pri ${s.prioridad}">${s.prioridad}</span></span>
+        <span class="r"><small>${esc(s.estado)}</small></span>
+      </button>`).join('') : '<p class="empty">Ninguna solicitud coincide con tu búsqueda. Prueba con otro cliente, destino o estado.</p>';
+  }
+
+  function detalle() {
+    const s = sel && Sol.obtener(sel), d = $('#detalle');
+    if (!s) { d.innerHTML = '<p class="empty">Selecciona una solicitud de la bandeja para ver su detalle.</p>'; return; }
+    d.innerHTML = `
+      <div class="dh"><div><h2>${s.id} · ${esc(s.cliente)} · ${esc(s.destino.split(',')[0])}</h2>
+        <p class="sub" style="margin:0">Recibida el ${fecha(s.recibida)} · Canal ${esc(s.canal.toLowerCase())}</p></div>
+        <span class="est ${s.estado.replace(' ', '.')}">${esc(s.estado)}</span></div>
+      <h3 class="sec">Datos del viaje</h3>
+      <div class="dl">
+        <div><small>Destino</small><b>${esc(s.destino)}</b></div>
+        <div><small>Fechas</small><b>${fecha(s.desde)} a ${fecha(s.hasta)}</b></div>
+        <div><small>Viajeros</small><b>${esc(s.viajeros)}</b></div>
+        <div><small>Presupuesto</small><b>${fmtCOP(s.presupuesto)}</b></div>
+      </div>
+      <h3 class="sec">Preferencias del cliente</h3>
+      <p class="pref">${esc(s.preferencias)}</p>
+      <div class="field"><label for="est">Estado de solicitud</label>
+        <div class="control sel"><select id="est">${['Nueva', 'En gestión', 'Cotizada'].map(x => `<option${x === s.estado ? ' selected' : ''}>${x}</option>`).join('')}</select></div></div>
+      ${s.falta ? `<p class="falta">Falta información: ${esc(s.falta)}.</p>` : ''}
+      <div class="actions">
+        <button type="button" class="btn" id="info">Solicitar información</button>
+        <button type="button" class="btn primary" id="cot">Crear cotización</button>
+      </div>`;
+  }
+
+  const todo = () => { lista(); detalle(); };
+
+  $('#lista').addEventListener('click', e => { const b = e.target.closest('.sc'); if (b) { sel = b.dataset.id; av.hidden = true; todo(); } });
+  ['#buscar', '#estado', '#prio'].forEach(id => $(id).addEventListener('input', lista));
+  $('#detalle').addEventListener('change', async e => {
+    if (e.target.id !== 'est') return;
+    const r = await Sol.actualizar(sel, { estado: e.target.value });
+    if (!r.ok) { Rumbo.aviso(av, 'err', 'No se pudo cambiar el estado', r.error); todo(); return; }
+    const s = r.solicitud; todo();
+    Rumbo.aviso(av, 'ok', 'Estado actualizado', `${s.id} · ${s.cliente} pasó a “${s.estado}”.`);
+  });
+  $('#detalle').addEventListener('click', async e => {
+    if (e.target.id === 'cot') { location.href = 'cotizacion-crear.html?sol=' + sel; return; }
+    if (e.target.id !== 'info') return;
+    const s0 = Sol.obtener(sel), r = await Sol.actualizar(sel, { estado: s0.estado === 'Nueva' ? 'En gestión' : s0.estado });
+    if (!r.ok) { Rumbo.aviso(av, 'err', 'No se pudo registrar', r.error); return; }
+    const s = r.solicitud; todo();
+    Rumbo.aviso(av, 'ok', 'Información solicitada', `Quedó registrada la solicitud de información para ${s.cliente}${s0.estado === 'Nueva' ? '. La solicitud pasó a “En gestión”' : ''}.`);
+  });
+
+  if (!sel || !Sol.obtener(sel)) sel = filtradas()[0]?.id ?? null;
+  todo();
+})();
+</script>
+</body>
+</html>

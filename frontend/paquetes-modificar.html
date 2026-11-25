@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumbo · Modificar paquete turístico</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <div class="content">
+    <header class="top" id="top"></header>
+    <main class="page">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">PAQUETES TURÍSTICOS / EDICIÓN</span>
+          <h1>Modificar paquete turístico</h1>
+          <p class="lead">Selecciona un paquete registrado y actualiza su información sin perder el historial.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="step">RF13 · Solo Administrador</span><a class="btn primary" href="paquetes-registrar.html">+ Nuevo paquete</a></div>
+      </div>
+
+      <div class="grid-mod">
+        <div class="stack">
+          <section class="card" aria-label="Paquetes registrados">
+            <h2>Paquetes registrados</h2>
+            <p class="sub" style="margin-bottom:0">Selecciona una fila para editar sus datos.</p>
+            <div class="tools">
+              <div class="control"><input id="buscar" type="search" placeholder="Nombre, destino o código" aria-label="Buscar paquete" autocomplete="off"></div>
+              <div class="control"><select id="estado" aria-label="Filtrar por estado"><option value="">Estado: todos</option><option>Publicado</option><option>Borrador</option></select></div>
+            </div>
+            <div class="list-h"><span>Paquete / destino</span><span id="cuenta">0 paquetes</span></div>
+            <div class="rows" id="lista" role="radiogroup" aria-label="Paquetes"></div>
+            <div class="pager"><span id="rango"></span><div><button type="button" id="ant" aria-label="Página anterior">‹</button><button type="button" id="sig" aria-label="Página siguiente">›</button></div></div>
+          </section>
+          <div class="notice" id="aviso" role="status" aria-live="polite" hidden></div>
+        </div>
+
+        <form class="card" id="paquete" novalidate>
+          <div class="edit-head"><div><h2>Editar paquete</h2><p class="sub" id="meta">Selecciona un paquete de la lista.</p></div></div>
+          <div class="edit-sec"><span>Datos generales y comerciales</span><span class="tag" id="estadoTag">Publicado</span></div>
+          <div id="campos"></div>
+          <div class="actions">
+            <button type="button" class="btn" id="cancelar">Cancelar</button>
+            <button type="submit" class="btn primary" id="guardar">Guardar cambios</button>
+          </div>
+          <p class="hint-line">Cancelar descarta la edición y conserva los datos registrados.</p>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+(async () => {
+  await Rumbo.listo;
+  if (!Rumbo.proteger('Administrador')) return;
+  const $ = Rumbo.$, f = $('#paquete'), av = $('#aviso'), POR_PAG = 4;
+  Rumbo.panel([['Panel de trabajo'], ['Paquetes turísticos']]);
+  $('#campos').innerHTML = Rumbo.camposHTML();
+  Rumbo.enlazar(f);
+
+  let sel = null, pag = 0;
+  const filtrados = () => {
+    const q = $('#buscar').value.trim().toLowerCase(), e = $('#estado').value;
+    return Rumbo.Paq.listar().filter(p => (!e || p.estado === e) && (!q || [p.id, p.nombre, p.destino].some(t => t.toLowerCase().includes(q))));
+  };
+  const dias = p => p.duracion.split(' ')[0] + ' días';
+
+  function lista() {
+    const todos = filtrados(), paginas = Math.max(1, Math.ceil(todos.length / POR_PAG));
+    pag = Math.min(pag, paginas - 1);
+    const visibles = todos.slice(pag * POR_PAG, pag * POR_PAG + POR_PAG);
+    $('#cuenta').textContent = `${todos.length} ${todos.length === 1 ? 'paquete' : 'paquetes'}`;
+    $('#lista').innerHTML = visibles.length ? visibles.map(p => `
+      <button type="button" class="pk" role="radio" aria-checked="${p.id === sel}" data-id="${p.id}">
+        <span class="dot"></span>
+        <span><strong>${Rumbo.esc(p.nombre)}</strong><small>${p.id} · ${Rumbo.esc(p.destino.split(',')[0])} · ${dias(p)}</small></span>
+        <span class="r"><b>${Rumbo.fmtCOP(p.precio)}</b><small class="${p.operacion ? 'op' : ''}">${p.operacion ? 'Operación activa' : p.cupos + ' cupos'}</small></span>
+      </button>`).join('') : '<p class="empty">Ningún paquete coincide con tu búsqueda. Prueba con otro nombre, destino o código.</p>';
+    $('#rango').textContent = todos.length ? `Mostrando ${pag * POR_PAG + 1}–${pag * POR_PAG + visibles.length} de ${todos.length}` : '';
+    $('#ant').disabled = pag === 0; $('#sig').disabled = pag >= paginas - 1;
+  }
+
+  function cargar(id) {
+    const p = Rumbo.Paq.obtener(id); if (!p) return;
+    sel = id; Rumbo.poner(f, p);
+    $('#meta').textContent = `${p.id} · Datos precargados · Última edición: ${Rumbo.fmtFecha(p.editado)}`;
+    const t = $('#estadoTag'); t.textContent = p.estado; t.classList.toggle('draft', p.estado !== 'Publicado');
+    Array.from(f.elements).forEach(el => el.disabled = false);
+    lista();
+  }
+
+  $('#lista').addEventListener('click', e => { const b = e.target.closest('.pk'); if (b) { av.hidden = true; cargar(b.dataset.id); } });
+  $('#buscar').addEventListener('input', () => { pag = 0; lista(); });
+  $('#estado').addEventListener('change', () => { pag = 0; lista(); });
+  $('#ant').addEventListener('click', () => { pag--; lista(); });
+  $('#sig').addEventListener('click', () => { pag++; lista(); });
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!sel) { Rumbo.aviso(av, 'err', 'Selecciona un paquete', 'Elige un paquete de la lista para poder editarlo.'); return; }
+    const d = Rumbo.leer(f), errs = Rumbo.validar(d, sel);
+    if (Object.keys(errs).length) {
+      Rumbo.marcar(f, errs);
+      Rumbo.aviso(av, 'err', 'No se guardaron los cambios', Object.values(errs).map(m => m.replace(/\.$/, '')).join('; ') + '.');
+      return;
+    }
+    const { precioTxt, ...datos } = d;
+    const r = await Rumbo.Paq.actualizar(sel, datos);
+    if (!r.ok) { Rumbo.aviso(av, 'err', 'No se guardaron los cambios', r.error); return; }
+    const p = r.paquete;
+    cargar(sel);
+    Rumbo.aviso(av, 'ok', 'Cambios guardados', `${p.id} · ${p.nombre} se actualizó correctamente. El catálogo ya muestra los cambios.`);
+  });
+
+  $('#cancelar').addEventListener('click', () => { if (sel) { cargar(sel); } av.hidden = true; });
+
+  /* Estado inicial: ?id=PQ-00X o el primer paquete */
+  const inicial = new URLSearchParams(location.search).get('id');
+  const todos = Rumbo.Paq.listar();
+  if (!todos.length) { Array.from(f.elements).forEach(el => el.disabled = true); lista(); }
+  else {
+    const i = todos.findIndex(p => p.id === inicial);
+    pag = i >= 0 ? Math.floor(i / POR_PAG) : 0;
+    cargar(i >= 0 ? inicial : todos[0].id);
+  }
+})();
+</script>
+</body>
+</html>
